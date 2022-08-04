@@ -53,3 +53,20 @@ def create_post(post: post_model):
     post_dict['id'] = randrange(0, 10000000)
     my_posts.append(post_dict)
     return {"data": post_dict}
+
+
+@app.put("/posts/{id}", status_code=status.HTTP_201_CREATED)
+def update_post(id: int, updated_post: post_model):
+    new_post_dict = updated_post.dict()
+    new_post_dict['id'] = id;
+    post = find_post(id)
+    my_posts.remove(post)
+    my_posts.append(new_post_dict)
+    return {"data": new_post_dict}
+
+
+@app.delete("/posts/{id}", status_code=status.HTTP_200_OK)
+def delete_post(id: int):
+    post = find_post(id)
+    my_posts.remove(post)
+    return {"data": post}
