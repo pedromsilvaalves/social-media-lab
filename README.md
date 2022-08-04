@@ -17,7 +17,7 @@ pip install "fastapi[all]"
 ### Start the API
 
 ```bash
-unicorn main:app --reload
+uvicorn main:app --reload
 ```
 
 ## References
