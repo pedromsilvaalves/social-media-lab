@@ -10,7 +10,6 @@ class post_model(BaseModel):
     title: str
     content: str
     published: bool = True
-    rating: Optional[int] = None
 
 
 my_posts = [
@@ -61,7 +60,7 @@ def create_post(post: post_model):
     return {"data": post_dict}
 
 
-@app.put("/posts/{id}")
+@app.put("/posts/{id}", status_code=status.HTTP_200_OK)
 def update_post(id: int, updated_post: post_model, response: Response):
     post_index = find_post_index(id)
     new_post_dict = updated_post.dict()
@@ -77,7 +76,7 @@ def update_post(id: int, updated_post: post_model, response: Response):
     return new_post_dict
 
 
-@app.delete("/posts/{id}")
+@app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int):
     post = find_post(id)
     if not post:
