@@ -26,6 +26,12 @@ def find_post(id):
     return None
 
 
+def find_post_index(id):
+    for index, post in enumerate(my_posts):
+        if post['id'] == id:
+            return index
+
+
 @app.get("/")
 def root():
     return {"message": "Welcome to my API"}
@@ -57,15 +63,17 @@ def create_post(post: post_model):
 
 @app.put("/posts/{id}")
 def update_post(id: int, updated_post: post_model, response: Response):
+    post_index = find_post_index(id)
     new_post_dict = updated_post.dict()
     new_post_dict['id'] = id
-    post = find_post(id)
-    if post:
-        my_posts.remove(post)
+
+    if post_index:
+        my_posts[post_index] = new_post_dict
         response.status_code = status.HTTP_200_OK
     else:
         response.status_code = status.HTTP_201_CREATED
-    my_posts.append(new_post_dict)
+        my_posts.append(new_post_dict)
+
     return new_post_dict
 
 
