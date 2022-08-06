@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import Body, FastAPI, status, HTTPException
+from fastapi import Body, FastAPI, Response, status, HTTPException
 from pydantic import BaseModel
 from random import randrange
 
@@ -55,18 +55,25 @@ def create_post(post: post_model):
     return {"data": post_dict}
 
 
-@app.put("/posts/{id}", status_code=status.HTTP_201_CREATED)
-def update_post(id: int, updated_post: post_model):
+@app.put("/posts/{id}")
+def update_post(id: int, updated_post: post_model, response: Response):
     new_post_dict = updated_post.dict()
-    new_post_dict['id'] = id;
+    new_post_dict['id'] = id
     post = find_post(id)
-    my_posts.remove(post)
+    if post:
+        my_posts.remove(post)
+        response.status_code = status.HTTP_200_OK
+    else:
+        response.status_code = status.HTTP_201_CREATED
     my_posts.append(new_post_dict)
-    return {"data": new_post_dict}
+    return new_post_dict
 
 
-@app.delete("/posts/{id}", status_code=status.HTTP_200_OK)
+@app.delete("/posts/{id}")
 def delete_post(id: int):
     post = find_post(id)
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"post with id: {id} does not exists")
     my_posts.remove(post)
-    return {"data": post}
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
