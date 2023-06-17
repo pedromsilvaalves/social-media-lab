@@ -7,20 +7,33 @@ This project is a social media creation lab, the final objetive is to create a s
 The current objetive is the creation of the back-end API using Python and FastAPI framework.
 In this project we will be using PostgreSQL as the database.
 
+The automatic generated API documentation are on the following URLs:
+
+- <http://127.0.0.1:8000/docs>
+- <http://127.0.0.1:8000/redoc>
+
 ### Requirements
 
 - Python
+- PostgreSQL
 - FastAPI
 - psycopg2
-- PostgreSQL
+- SQLAlchemy
 
 ### Setting up the dependencies
 
 #### Project packages and extensions
 
 ```bash
+pip install -r requirements.txt
+```
+
+or
+
+``` bash
 pip install "fastapi[all]"
 pip install psycopg2
+pip install SQLAlchemy
 ```
 
 #### Postgres database setup
@@ -66,9 +79,9 @@ conn = psycopg2.connect(
         )
 ```
 
-
 ## How to use
 
+..
 
 ### Start the API
 
