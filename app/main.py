@@ -1,10 +1,8 @@
 import time
 import psycopg2
 
-
 from psycopg2.extras import RealDictCursor
 from fastapi import FastAPI, Response, status, HTTPException, Depends
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -19,7 +17,7 @@ app = FastAPI()
 is_database_connected = False
 
 while not is_database_connected:
-    try:
+    try: 
         conn = psycopg2.connect(
             host="localhost",
             dbname="socialmediadb",
@@ -155,3 +153,12 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     db.commit()
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@app.post("/users", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    new_user = models.User(**user.dict())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return new_user
