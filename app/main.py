@@ -6,19 +6,14 @@ from psycopg2.extras import RealDictCursor
 from fastapi import FastAPI, Response, status, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from typing import List
 
-from . import models
+from . import models, schemas
 from .database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
-
-class Post(BaseModel):
-    title: str
-    content: str
-    published: bool = True
 
 # DIRECT DATABASE CONNECTION METHOD DEPENDENCY
 is_database_connected = False
@@ -40,7 +35,7 @@ while not is_database_connected:
         print("Database connection failed. Error: ", error)
         time.sleep(2)
 
-@app.get("/posts")
+@app.get("/posts", response_model=List[schemas.Post])
 def get_posts(db: Session = Depends(get_db)):
     # DIRECT METHOD
     # sql_query = """
@@ -52,10 +47,10 @@ def get_posts(db: Session = Depends(get_db)):
     # ORM METHOD
     posts = db.query(models.Post).all()
 
-    return {"data": posts}
+    return posts
 
 
-@app.get("/posts/{id}")
+@app.get("/posts/{id}", response_model=schemas.Post)
 def get_post(id: int, db: Session = Depends(get_db)):
     # DIRECT METHOD
     # sql_query = """
@@ -77,11 +72,11 @@ def get_post(id: int, db: Session = Depends(get_db)):
             detail=f"post with id: {id} was not found"
         )
 
-    return {"data": post}
+    return post
 
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_post(post: Post, db: Session = Depends(get_db)):
+@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
+def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
     # DIRECT METHOD
     # sql_query = """
     # INSERT INTO posts (title, content, published) VALUES (%s, %s, %s)
@@ -99,11 +94,11 @@ def create_post(post: Post, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_post)
 
-    return {"data": new_post}
+    return new_post
 
 
-@app.put("/posts/{id}", status_code=status.HTTP_200_OK)
-def update_post(id: int, post: Post, db: Session = Depends(get_db)):
+@app.put("/posts/{id}", status_code=status.HTTP_200_OK, response_model=schemas.Post)
+def update_post(id: int, post: schemas.PostCreate, db: Session = Depends(get_db)):
     # DIRECT METHOD
     # sql_query = """
     # UPDATE posts
