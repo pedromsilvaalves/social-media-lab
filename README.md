@@ -12,21 +12,30 @@ The automatic generated API documentation are on the following URLs:
 - <http://127.0.0.1:8000/docs>
 - <http://127.0.0.1:8000/redoc>
 
-### Requirements
+## Requirements
 
 - Python
 - PostgreSQL
 - FastAPI
 - psycopg2
 - SQLAlchemy
+- Passlib
+- Bcrypt
 
-### Setting up the dependencies
+## Setting up the dependencies
 
-#### Project packages and extensions
+### Project packages and extensions
 
 ```bash
 pip install -r requirements.txt
 ```
+
+> **Note**
+> Generate the requirements.txt by using:
+>
+> ```bash
+> pip freeze > requirements.txt
+> ```
 
 or
 
@@ -34,16 +43,23 @@ or
 pip install "fastapi[all]"
 pip install psycopg2
 pip install SQLAlchemy
+pip install passlib[bcrypt]
 ```
 
-#### Postgres database setup
+### Postgres database setup
 
-Create necessary database tables
+All the Postgres database setup is done by the SQLAlchemy(ORM)
+
 Current tables:
 
 - posts
+- users
 
-SQL for the tables setup:
+#### Deprecated
+
+Create necessary database tables
+
+SQL for the posts table setup:
 
 ```sql
 -- This sequence takes care of the Unique IDs of the system
@@ -92,3 +108,4 @@ uvicorn app.main:app --reload
 ## References
 
 [Python API Development - Comprehensive Course for Beginners - Sanjeev Thiyagarajan](https://www.youtube.com/watch?v=0sOvCWFmrtA)
+
